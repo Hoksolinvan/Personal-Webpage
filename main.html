@@ -37,7 +37,8 @@ const CAT_FPS = 8;
 
             const offscreen = document.createElement('canvas');
             gifler('assets/sprite_furnitures/ibm5150_animated.gif').animate(offscreen);
-
+            const offscreen2 = document.createElement('canvas');
+            gifler('assets/sprite_furnitures/ramen_transparent.gif').animate(offscreen2);
 
 
             async function init() {
@@ -48,8 +49,11 @@ const CAT_FPS = 8;
                 const carpet        = await loadImages("assets/sprite_furnitures/carpet.png");
                 const cat           = await loadImages("assets/sprite_furnitures/Cat.png");
                 const bed           = await loadImages("assets/sprite_furnitures/master_bed.png");
-                //const computer = await loadImages("assets/sprite_furnitures/ibm5150.gif");
-
+                const sofa1 = await loadImages("assets/sprite_furnitures/sofa_1.png");
+                const sofa2 = await loadImages("assets/sprite_furnitures/sofa_2.png");
+                const table = await loadImages("assets/sprite_furnitures/table.png");
+                const flowerPot = await loadImages("assets/sprite_furnitures/Flower.png");
+                const table_2 = await loadImages("assets/sprite_furnitures/interior_free.png");
                 ctx.imageSmoothingEnabled = false;
 
                 function render(timestamp) {
@@ -70,6 +74,12 @@ const CAT_FPS = 8;
                     ctx.drawImage(desk, -10, 13, 200, 100);
                     ctx.drawImage(offscreen, 20, 2, 55, 55); // gif on desk
                     ctx.drawImage(carpet, 300, 300, 200, 200);
+                    ctx.drawImage(sofa1,305,165,200,150);
+                    ctx.drawImage(sofa2,495,300,130,200);
+                    ctx.drawImage(table,490,200,120,120);
+                    ctx.drawImage(flowerPot,523,195,50,50);
+                    ctx.drawImage(table_2,0,500,75,75);
+                    ctx.drawImage(offscreen2,10,485,55,55);
 
                     if (timestamp - lastTime > 1000 / CAT_FPS) {
         frame_index = (frame_index + 1) % 4;
@@ -77,7 +87,7 @@ const CAT_FPS = 8;
     }
 
                     const [sx,sy,sw,sh] = cat_frames[frame_index];
-                    ctx.drawImage(cat,sx,sy,sw,sh, 335, 290, 120, 120);
+                    ctx.drawImage(cat,sx,sy,sw,sh, 337, 290, 120, 120);
 
                     requestAnimationFrame(render);
                 }
