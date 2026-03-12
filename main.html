@@ -54,6 +54,8 @@ const CAT_FPS = 8;
                 const table = await loadImages("assets/sprite_furnitures/table.png");
                 const flowerPot = await loadImages("assets/sprite_furnitures/Flower.png");
                 const table_2 = await loadImages("assets/sprite_furnitures/interior_free.png");
+                const book = await loadImages("assets/sprite_furnitures/book_transparent.png");
+                const kettlebell = await loadImages("assets/sprite_furnitures/kettlebell.png");
                 ctx.imageSmoothingEnabled = false;
 
                 function render(timestamp) {
@@ -80,6 +82,8 @@ const CAT_FPS = 8;
                     ctx.drawImage(flowerPot,523,195,50,50);
                     ctx.drawImage(table_2,0,500,75,75);
                     ctx.drawImage(offscreen2,10,485,55,55);
+                    ctx.drawImage(book,100,15,40,40);
+                    ctx.drawImage(kettlebell,-25,550,125,125);
 
                     if (timestamp - lastTime > 1000 / CAT_FPS) {
         frame_index = (frame_index + 1) % 4;
