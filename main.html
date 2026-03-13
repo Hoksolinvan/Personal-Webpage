@@ -1,13 +1,56 @@
 <!DOCTYPE html>
 <html>
     <head><title>Hoksolinvan_Chhun</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="favicon.png"> 
     <script src="https://unpkg.com/gifler@0.1.0/gifler.min.js"></script>
+    <style>
+
+        #text_id { 
+            width:100vw;
+            height: 25%;
+            background-color: aliceblue;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            visibility: hidden;
+            font-family: "Pixelify Sans", sans-serif;
+            font-size: 40px;
+            padding-left: 5%;
+            align-items: center;
+            border: 10px solid rgb(105, 12, 12);
+        }
+
+
+    </style>
     </head>
     
-    <body id="body_element" style="background-color:black; display:flex; height: 100vh; justify-content:center; align-items:center;">
-        <canvas id="canvas" width="700" height="700" style="background-color:white;"></canvas>
+    <body id="body_element" style="background-color:black; height: 100vh; width: 100vw;">
 
+        <div style=" display:flex;  justify-content:center; align-items:center;">
+        <canvas id="canvas" width="700" height="700" style="background-color:white;"></canvas>
+        </div>
+
+
+        <div id="text_id"><p style="margin-left:-4%; margin-top:0%; font-weight:900;">Van</p><div style="margin-top:-3%; word-wrap:break-word;"></div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- Script -->
         <script>
 
             let global_counter_y =0;
@@ -35,7 +78,15 @@
                     current_direction=4;
                     console.log(global_counter_x);
                     break;
-                    default:
+                    case 'KeyE':
+                        const text_element_node = document.getElementById('text_id');
+                        const style = window.getComputedStyle(text_element_node).visibility;
+                        if(style=="hidden"){
+                            text_element_node.style.visibility = "visible";
+                        }
+                        else{
+                            text_element_node.style.visibility = "hidden";
+                        }
 
                     break;
                 }
@@ -47,6 +98,9 @@
             
             // Van's Sprite Character
             const data = {"frames":{"New Piskel0.png":{"frame":{"x":0,"y":0,"w":47,"h":32}},"New Piskel1.png":{"frame":{"x":0,"y":32,"w":47,"h":32}},"New Piskel2.png":{"frame":{"x":0,"y":64,"w":47,"h":32}},"New Piskel3.png":{"frame":{"x":0,"y":96,"w":47,"h":32}},"New Piskel4.png":{"frame":{"x":0,"y":128,"w":47,"h":32}},"New Piskel5.png":{"frame":{"x":0,"y":160,"w":47,"h":32}},"New Piskel6.png":{"frame":{"x":0,"y":192,"w":47,"h":32}},"New Piskel7.png":{"frame":{"x":0,"y":224,"w":47,"h":32}},"New Piskel8.png":{"frame":{"x":0,"y":256,"w":47,"h":32}}}};
+            const player_frames = [[0,0,47,32],[0,32,47,32],[0,64,47,32],[0,96,47,32],[0,128,47,32],[0,160,47,32],[0,192,47,32],[0,224,47,32],[0,256,47,32]];
+
+            // Cat's Sprite Character
             const cat_frames = [[0,0,32,32],[32,0,32,32],[64,0,32,32],[96,0,32,32]];
 
             let frame_index = 0;
@@ -90,6 +144,7 @@ const CAT_FPS = 8;
                 const book = await loadImages("assets/sprite_furnitures/book_transparent.png");
                 const joystick = await loadImages("assets/sprite_furnitures/joystick.png");
                 const kettlebell = await loadImages("assets/sprite_furnitures/kettlebell.png");
+                
                 ctx.imageSmoothingEnabled = false;
 
                 function render(timestamp) {
@@ -119,6 +174,7 @@ const CAT_FPS = 8;
                     ctx.drawImage(book,100,15,40,40);
                     ctx.drawImage(kettlebell,-25,550,125,125);
                     ctx.drawImage(joystick,15,625,50,50);
+                    ctx.drawImage(player,player_frames[0][0],player_frames[0][1],player_frames[0][2],player_frames[0][3],100,100,175,150);
 
                     if (timestamp - lastTime > 1000 / CAT_FPS) {
         frame_index = (frame_index + 1) % 4;
