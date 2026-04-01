@@ -36,69 +36,52 @@
 
         <div id="text_id"><p style="margin-left:-4%; margin-top:0%; font-weight:900;">Van</p><div style="margin-top:-3%; word-wrap:break-word;"></div></div>
 
-
-
-
-
-
-
-
-        <!-- Script -->
         <script>
 
-            let global_counter_y =0;
-            let global_counter_x = 0;
+            let global_counter_y =100;
+            let global_counter_x = 100;
+            let global_state = "D";
+            let W_frame = 0;
+            let A_frame = 0;
+            let S_frame = 0;
+            let D_frame = 0;
             let current_direction=4;
-            document.addEventListener('keydown',(e)=>{
-                switch(e.code){
-                    case 'KeyW': 
-                    global_counter_y+=10;
-                    current_direction=1;
-                    console.log(global_counter_y);
-                    break;
-                    case 'KeyA':
-                    global_counter_x-=10;
-                    current_direction=2;
-                    console.log(global_counter_x);
-                    break;
-                    case 'KeyS':
-                    global_counter_y-=10;
-                    current_direction=3;
-                    console.log(global_counter_y);
-                    break;
-                    case 'KeyD':
-                    global_counter_x+=10;
-                    current_direction=4;
-                    console.log(global_counter_x);
-                    break;
-                    case 'KeyE':
-                        const text_element_node = document.getElementById('text_id');
-                        const style = window.getComputedStyle(text_element_node).visibility;
-                        if(style=="hidden"){
-                            text_element_node.style.visibility = "visible";
-                        }
-                        else{
-                            text_element_node.style.visibility = "hidden";
-                        }
 
-                    break;
+            // ✅ NEW: key state tracking
+            let keys = {};
+
+            document.addEventListener('keydown',(e)=>{
+                keys[e.code] = true;
+
+                // keep your E toggle
+                if (e.code === 'KeyE' && !e.repeat) {
+                    const text_element_node = document.getElementById('text_id');
+                    const style = window.getComputedStyle(text_element_node).visibility;
+                    if(style=="hidden"){
+                        text_element_node.style.visibility = "visible";
+                    }
+                    else{
+                        text_element_node.style.visibility = "hidden";
+                    }
                 }
+            });
+
+            document.addEventListener('keyup',(e)=>{
+                keys[e.code] = false;
             });
 
 
             const canvas = document.getElementById("canvas");
             const ctx = canvas.getContext("2d");
             
-            // Van's Sprite Character
             const data = {"frames":{"New Piskel0.png":{"frame":{"x":0,"y":0,"w":47,"h":32}},"New Piskel1.png":{"frame":{"x":0,"y":32,"w":47,"h":32}},"New Piskel2.png":{"frame":{"x":0,"y":64,"w":47,"h":32}},"New Piskel3.png":{"frame":{"x":0,"y":96,"w":47,"h":32}},"New Piskel4.png":{"frame":{"x":0,"y":128,"w":47,"h":32}},"New Piskel5.png":{"frame":{"x":0,"y":160,"w":47,"h":32}},"New Piskel6.png":{"frame":{"x":0,"y":192,"w":47,"h":32}},"New Piskel7.png":{"frame":{"x":0,"y":224,"w":47,"h":32}},"New Piskel8.png":{"frame":{"x":0,"y":256,"w":47,"h":32}}}};
             const player_frames = [[0,0,47,32],[0,32,47,32],[0,64,47,32],[0,96,47,32],[0,128,47,32],[0,160,47,32],[0,192,47,32],[0,224,47,32],[0,256,47,32]];
 
-            // Cat's Sprite Character
             const cat_frames = [[0,0,32,32],[32,0,32,32],[64,0,32,32],[96,0,32,32]];
 
             let frame_index = 0;
-let lastTime = 0;
-const CAT_FPS = 8;
+            let lastTime = 0;
+            const CAT_FPS = 8;
 
             const frame_location = [];
             for (const key in data.frames) {
@@ -141,7 +124,38 @@ const CAT_FPS = 8;
                 ctx.imageSmoothingEnabled = false;
 
                 function render(timestamp) {
-                    ctx.clearRect(0, 0, 700, 700); // clear every frame
+                    ctx.clearRect(0, 0, 700, 700);
+
+                    // ✅ NEW: movement + state
+                    let isMoving = false;
+
+                    if (keys['KeyW']) {
+                        if (global_counter_y > 0) global_counter_y -= 2;
+                        global_state = "U";
+                        isMoving = true;
+                    }
+                    if (keys['KeyA']) {
+                        if (global_counter_x > 0) global_counter_x -= 2;
+                        global_state = "L";
+                        isMoving = true;
+                    }
+                    if (keys['KeyS']) {
+                        if (global_counter_y < 590) global_counter_y += 2;
+                        global_state = "D";
+                        isMoving = true;
+                    }
+                    if (keys['KeyD']) {
+                        if (global_counter_x < 640) global_counter_x += 2;
+                        global_state = "R";
+                        isMoving = true;
+                    }
+
+                    // ✅ NEW: idle vs animation
+                    if (isMoving) {
+                        W_frame = (W_frame + 1) % 2;
+                    } else {
+                        W_frame = 0;
+                    }
 
                     // floors
                     for (let i = 0; i < 700; i += 100) {
@@ -153,10 +167,9 @@ const CAT_FPS = 8;
                         }
                     }
 
-                    // furniture back to front
                     ctx.drawImage(bed, 0, 300, 200, 200);
                     ctx.drawImage(desk, -10, 13, 200, 100);
-                    ctx.drawImage(offscreen, 20, 2, 55, 55); // gif on desk
+                    ctx.drawImage(offscreen, 20, 2, 55, 55);
                     ctx.drawImage(carpet, 300, 300, 200, 200);
                     ctx.drawImage(sofa1,305,165,200,150);
                     ctx.drawImage(sofa2,495,300,130,200);
@@ -167,12 +180,25 @@ const CAT_FPS = 8;
                     ctx.drawImage(book,100,15,40,40);
                     ctx.drawImage(kettlebell,-25,550,125,125);
                     ctx.drawImage(joystick,15,625,50,50);
-                    ctx.drawImage(player,player_frames[0][0],player_frames[0][1],player_frames[0][2],player_frames[0][3],100,100,175,150);
 
                     if (timestamp - lastTime > 1000 / CAT_FPS) {
-        frame_index = (frame_index + 1) % 4;
-        lastTime = timestamp;
-    }
+                        frame_index = (frame_index + 1) % 4;
+                        lastTime = timestamp;
+                    }
+
+                    // ⚠️ only small change: use W_frame offset
+                    if(global_state=="D"){
+                        ctx.drawImage(player,...player_frames[0 + W_frame],global_counter_x,global_counter_y,175,150);
+                    }
+                    else if(global_state=="U"){
+                        ctx.drawImage(player,...player_frames[1 + W_frame],global_counter_x,global_counter_y,175,150);
+                    }
+                    else if(global_state=="L"){
+                        ctx.drawImage(player,...player_frames[2 + W_frame],global_counter_x,global_counter_y,175,150);
+                    }
+                    else if(global_state=="R"){
+                        ctx.drawImage(player,...player_frames[3 + W_frame],global_counter_x,global_counter_y,175,150);
+                    }
 
                     const [sx,sy,sw,sh] = cat_frames[frame_index];
                     ctx.drawImage(cat,sx,sy,sw,sh, 337, 290, 120, 120);
