@@ -42,6 +42,8 @@
 
         <script>
             let audio= false;
+            // (x,y,width,height)
+            const colliders = [[-10, 13, 200, 25],[0,350,183,72],[490, 410, 200, 10]];
 
             document.addEventListener("click",()=>{
                 const current = document.getElementById("bgm");
@@ -56,6 +58,26 @@
                     current.pause();
                 }
             });
+
+
+            function AABB_checker(user_position_tl_x=100, user_position_tl_y=100,user_width,user_height)
+            {
+                for(let i=0; i<colliders.length;i++){
+                    let tl_x = colliders[i][0]; 
+                    let tl_y = colliders[i][1];
+                    let cw = colliders[i][2];
+                    let ch = colliders[i][3];
+
+
+                    if((user_position_tl_x<tl_x+cw && user_position_tl_x + user_width> tl_x && user_position_tl_y < tl_y+ch && user_position_tl_y+user_height > tl_y)){
+                        return false;
+                    }
+
+
+                }
+
+                return true;
+            }
 
             let global_counter_y =100;
             let global_counter_x = 100;
@@ -130,11 +152,11 @@
             const CAT_FPS = 8;
             const PLAYER_FPS = 8;
 
-            const frame_location = [];
-            for (const key in data.frames) {
-                const frame = data.frames[key].frame;
-                frame_location.push([frame.x, frame.y, frame.w, frame.h]);
-            }
+            // const frame_location = [];
+            // for (const key in data.frames) {
+            //     const frame = data.frames[key].frame;
+            //     frame_location.push([frame.x, frame.y, frame.w, frame.h]);
+            // }
 
             function loadImages(src) {
                 return new Promise((resolve, reject) => {
@@ -175,9 +197,9 @@
                     ctx.clearRect(0, 0, 700, 700);
 
                     let isMoving = false;
-
+                    
                     if (keys['KeyW']) {
-                        if (global_counter_y > 0) global_counter_y -= 2;
+                        if (global_counter_y> 0 && AABB_checker(global_counter_x,global_counter_y-2,175,150)) global_counter_y -= 2;
                         global_state = "U";
                          if(timestamp - lastTime > 1000 / PLAYER_FPS){
                             player_frame_up_index = (player_frame_up_index+1) % 4;
@@ -188,7 +210,7 @@
 
                 
                     if (keys['KeyA']) {
-                        if (global_counter_x > 0) global_counter_x -= 2;
+                        if (global_counter_x > 0 && AABB_checker(global_counter_x-2,global_counter_y,175,150)) global_counter_x -= 2;
                         global_state = "L";
                          if(timestamp - lastTime > 1000 / PLAYER_FPS){
                             player_frame_left_index = (player_frame_left_index+1) % 6;
@@ -197,7 +219,7 @@
                         isMoving = true;
                     }
                     if (keys['KeyS']) {
-                        if (global_counter_y < 590) global_counter_y += 2;
+                        if (global_counter_y < 590 && AABB_checker(global_counter_x,global_counter_y+2,175,150) ) global_counter_y += 2;
                         global_state = "D";
                         if(timestamp - lastTime > 1000 / PLAYER_FPS){
                             player_frame_down_index = (player_frame_down_index+1) % 4;
@@ -207,7 +229,7 @@
                         isMoving = true;
                     }
                     if (keys['KeyD']) {
-                        if (global_counter_x < 640) global_counter_x += 2;
+                        if (global_counter_x < 640 && AABB_checker(global_counter_x+2,global_counter_y,175,150)) global_counter_x += 2;
                         global_state = "R";
                         if(timestamp - lastTime > 1000 / PLAYER_FPS){
                             player_frame_right_index = (player_frame_right_index+1) % 6;
